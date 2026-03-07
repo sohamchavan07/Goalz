@@ -20,14 +20,14 @@ export function StatusBar({ blocks, priorities }: StatusBarProps) {
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
       {stats.map(({ icon: Icon, label, value, color }) => (
-        <div key={label} className="rounded-lg border border-border bg-card p-4">
+        <div key={label} className="floating-card p-5 hover-lift">
           <div className="flex items-center gap-2">
-            <Icon className={`h-4 w-4 ${color}`} />
-            <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</span>
+            <Icon className={`h-4 w-4 ${color} glow-text-primary`} />
+            <span className="font-display text-[10px] uppercase tracking-widest text-muted-foreground font-bold">{label}</span>
           </div>
-          <p className={`mt-1 font-mono text-2xl font-bold ${color}`}>{value}</p>
+          <p className={`mt-2 font-mono-premium text-2xl font-bold ${color}`}>{value}</p>
         </div>
       ))}
     </div>

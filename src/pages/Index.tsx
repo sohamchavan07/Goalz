@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Crosshair, CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { format, addDays, subDays, isToday } from "date-fns";
@@ -26,7 +27,7 @@ const Index = () => {
   const { permission, requestPermission, pendingAction, dismissAction } = useNotifications(store.blocks);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-transparent perspective-container">
       {/* Sticky Current Task Header */}
       <StickyTaskHeader
         blocks={store.blocks}
@@ -42,11 +43,11 @@ const Index = () => {
           className="mb-6 flex items-center justify-between"
         >
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 glow-primary-sm">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 glow-primary border border-primary/20">
               <Crosshair className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h1 className="text-gradient text-xl font-bold tracking-tight">GOALZ</h1>
+              <h1 className="text-gradient text-2xl font-display font-bold tracking-tight">GOALZ</h1>
               <div className="flex items-center gap-1">
                 <button onClick={() => store.setSelectedDate(subDays(store.selectedDate, 1))} className="rounded p-0.5 hover:bg-secondary">
                   <ChevronLeft className="h-3 w-3 text-muted-foreground" />
@@ -79,12 +80,16 @@ const Index = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <AddBlockDialog onAdd={store.addBlock} />
-            <SettingsPanel
-              settings={store.settings}
-              onUpdate={store.updateSettings}
-              onForceRitual={forceRitual}
-            />
+            <div className="hover-lift">
+              <AddBlockDialog onAdd={store.addBlock} />
+            </div>
+            <div className="hover-lift">
+              <SettingsPanel
+                settings={store.settings}
+                onUpdate={store.updateSettings}
+                onForceRitual={forceRitual}
+              />
+            </div>
           </div>
         </motion.header>
 
@@ -93,7 +98,7 @@ const Index = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="mb-6"
+          className="mb-8"
         >
           <FocusBanner block={store.currentFocusBlock} />
         </motion.div>
@@ -103,7 +108,7 @@ const Index = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="mb-6"
+          className="mb-8"
         >
           <StatusBar blocks={store.blocks} priorities={store.priorities} />
         </motion.div>
@@ -113,7 +118,7 @@ const Index = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="grid gap-6 lg:grid-cols-[1fr_1.6fr]"
+          className="grid gap-8 lg:grid-cols-[1fr_1.6fr]"
         >
           <TopPriorities
             priorities={store.priorities}

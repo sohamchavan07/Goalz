@@ -41,32 +41,32 @@ export function TimeBlocker({ blocks, onToggleComplete, focusBlockId, onSetFocus
   };
 
   return (
-    <div className="rounded-lg border border-border bg-card p-5">
-      <div className="mb-4 flex items-center justify-between">
+    <div className="floating-card p-6">
+      <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Clock className="h-4 w-4 text-primary" />
-          <h2 className="font-mono text-sm font-semibold uppercase tracking-wider text-foreground">
+          <Clock className="h-4 w-4 text-primary glow-text-primary" />
+          <h2 className="font-display text-sm font-semibold uppercase tracking-wider text-foreground">
             Time Blocks
           </h2>
         </div>
-        <div className="flex gap-3 font-mono text-xs">
+        <div className="flex gap-4 font-mono-premium text-xs font-bold uppercase tracking-widest">
           <span className="text-primary">{deepWorkHours}h deep</span>
-          <span className="text-muted-foreground">·</span>
+          <span className="text-muted-foreground/40">/</span>
           <span className="text-meeting">{meetingHours}h meetings</span>
         </div>
       </div>
 
       {/* Anti-Meeting Guard */}
       {meetingHours > 2 && (
-        <div className="mb-4 flex items-center gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 font-mono text-xs text-destructive">
-          <Shield className="h-3 w-3" />
+        <div className="mb-4 flex items-center gap-2 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 font-display text-xs text-destructive font-bold uppercase tracking-wider">
+          <Shield className="h-3 w-3 animate-pulse" />
           Warning: {meetingHours}h of meetings. Consider declining some.
         </div>
       )}
 
       {/* Meeting Buffer indicator */}
       {meetingBuffer && (
-        <div className="mb-4 flex items-center gap-2 rounded-md border border-primary/20 bg-primary/5 px-3 py-2 font-mono text-[10px] text-primary">
+        <div className="mb-4 flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 font-display text-[10px] text-primary font-bold uppercase tracking-widest">
           <Coffee className="h-3 w-3" />
           {bufferMinutes}min buffer enabled between blocks
         </div>
@@ -80,11 +80,11 @@ export function TimeBlocker({ blocks, onToggleComplete, focusBlockId, onSetFocus
           if (isOccupied) return null;
 
           return (
-            <div key={hour} className="flex min-h-[40px]">
-              <div className="w-14 shrink-0 pr-3 pt-1 text-right font-mono text-[10px] text-muted-foreground/60">
+            <div key={hour} className="flex min-h-[50px]">
+              <div className="w-16 shrink-0 pr-4 pt-2 text-right font-mono-premium text-[10px] text-muted-foreground/40 uppercase font-bold">
                 {formatHour(hour)}
               </div>
-              <div className="flex-1 border-l border-border/50 pl-3">
+              <div className="flex-1 border-l border-white/5 pl-4">
                 {block ? (
                   <>
                     <TimeBlockItem
@@ -94,9 +94,9 @@ export function TimeBlocker({ blocks, onToggleComplete, focusBlockId, onSetFocus
                       onFocus={() => onSetFocus(block.id)}
                     />
                     {meetingBuffer && hasFollowingBlock(block) && (
-                      <div className="mb-1 flex items-center gap-1.5 rounded border border-dashed border-muted-foreground/20 px-2 py-1">
-                        <Coffee className="h-2.5 w-2.5 text-muted-foreground/40" />
-                        <span className="font-mono text-[9px] text-muted-foreground/40">{bufferMinutes}min buffer</span>
+                      <div className="mb-2 flex items-center gap-1.5 rounded-lg border border-dashed border-white/10 px-3 py-2 bg-white/5">
+                        <Coffee className="h-3 w-3 text-muted-foreground/40" />
+                        <span className="font-display text-[9px] text-muted-foreground/40 uppercase font-bold tracking-widest">{bufferMinutes}min buffer interval</span>
                       </div>
                     )}
                   </>
@@ -168,38 +168,36 @@ function TimeBlockItem({
 
   return (
     <motion.div
-      whileHover={{ x: 2 }}
-      className={`group mb-1 flex items-start gap-2 rounded-md border px-3 py-2 transition-all ${style.bg} ${style.border} ${
-        isFocused ? "glow-primary-sm ring-1 ring-primary/30" : ""
-      } ${block.completed ? "opacity-50" : ""}`}
+      whileHover={{ scale: 1.01, x: 4 }}
+      className={`group mb-2 flex items-start gap-3 rounded-xl border px-4 py-3 transition-all ${style.bg} ${style.border} ${isFocused ? "glow-primary ring-1 ring-primary/30" : ""
+        } ${block.completed ? "opacity-40 grayscale-[0.5]" : "hover:border-primary/40"} hover-lift shadow-lg`}
       style={{ minHeight: height }}
     >
-      <button onClick={onToggle} className="mt-0.5 shrink-0">
-        <div className={`flex h-4 w-4 items-center justify-center rounded border transition-all ${
-          block.completed ? "border-success bg-success" : "border-muted-foreground/30 hover:border-primary"
-        }`}>
-          {block.completed && <Check className="h-2.5 w-2.5 text-success-foreground" />}
+      <button onClick={onToggle} className="mt-1 shrink-0">
+        <div className={`flex h-5 w-5 items-center justify-center rounded-lg border-2 transition-all ${block.completed ? "border-success bg-success" : "border-muted-foreground/30 hover:border-primary"
+          }`}>
+          {block.completed && <Check className="h-3 w-3 text-success-foreground" />}
         </div>
       </button>
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5">
-          <Icon className="h-3 w-3 text-muted-foreground" />
-          <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{style.label}</span>
+        <div className="flex items-center gap-2">
+          <Icon className="h-3.5 w-3.5 text-muted-foreground/60" />
+          <span className="font-display text-[10px] uppercase tracking-widest text-muted-foreground/60 font-bold">{style.label}</span>
         </div>
-        <p className={`font-mono text-sm ${block.completed ? "line-through text-muted-foreground" : "text-foreground"}`}>
+        <p className={`font-display font-semibold text-base mt-0.5 ${block.completed ? "line-through text-muted-foreground/60" : "text-foreground"}`}>
           {block.title}
         </p>
-        <span className="font-mono text-[10px] text-muted-foreground">
+        <span className="font-mono-premium text-[10px] text-muted-foreground/60 mt-1 block uppercase tracking-wider">
           {formatHour(block.startHour)} – {formatHour(block.startHour + block.duration)} · {block.duration}h
         </span>
       </div>
       {!isFocused && !block.completed && (
         <button
           onClick={onFocus}
-          className="mt-1 opacity-0 group-hover:opacity-100 transition-opacity"
+          className="mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity bg-primary/10 p-1.5 rounded-lg border border-primary/20 hover:bg-primary/20"
           title="Set as current focus"
         >
-          <Play className="h-3 w-3 text-primary" />
+          <Play className="h-3.5 w-3.5 text-primary" />
         </button>
       )}
     </motion.div>

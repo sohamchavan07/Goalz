@@ -19,19 +19,19 @@ export function TopPriorities({ priorities, onToggle, onUpdate, onAdd, onRemove,
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   return (
-    <div className="rounded-lg border border-border bg-card p-5">
-      <div className="mb-4 flex items-center justify-between">
+    <div className="floating-card p-6">
+      <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Target className="h-4 w-4 text-primary" />
-          <h2 className="font-mono text-sm font-semibold uppercase tracking-wider text-foreground">
+          <Target className="h-4 w-4 text-primary glow-text-primary" />
+          <h2 className="font-display text-sm font-semibold uppercase tracking-wider text-foreground">
             Priorities
           </h2>
         </div>
         <div className="flex items-center gap-2">
-          <span className="font-mono text-xs text-muted-foreground">{completed}/{priorities.length}</span>
+          <span className="font-mono-premium text-xs text-muted-foreground">{completed}/{priorities.length}</span>
           <button
             onClick={onAdd}
-            className="flex items-center gap-1 rounded px-1.5 py-0.5 font-mono text-[10px] text-primary hover:bg-primary/10 transition-colors"
+            className="flex items-center gap-1 rounded px-1.5 py-0.5 font-display text-[10px] text-primary hover:bg-primary/10 transition-colors uppercase font-bold tracking-widest"
           >
             <Plus className="h-3 w-3" /> Add
           </button>
@@ -111,6 +111,7 @@ function PriorityItem({
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [draft, setDraft] = useState(p.text);
+  const [isLaunching, setIsLaunching] = useState(false);
 
   useEffect(() => { setDraft(p.text); }, [p.text]);
   useEffect(() => { if (isEditing) inputRef.current?.focus(); }, [isEditing]);
@@ -120,15 +121,25 @@ function PriorityItem({
     onEndEdit();
   };
 
+  const handleToggle = () => {
+    if (!p.completed) {
+      setIsLaunching(true);
+      setTimeout(() => {
+        onToggle();
+        setIsLaunching(false);
+      }, 700);
+    } else {
+      onToggle();
+    }
+  };
+
   return (
     <div
-      className={`group flex w-full items-center gap-2 rounded-md border px-3 py-2.5 transition-all ${
-        isDragging ? "opacity-40" : ""
-      } ${
-        p.completed
-          ? "border-success/20 bg-success/5"
-          : "border-border bg-secondary/30 hover:border-primary/30"
-      }`}
+      className={`group flex w-full items-center gap-3 rounded-xl border px-3 py-3 transition-all ${isDragging ? "opacity-40" : ""
+        } ${isLaunching ? "animate-launch" : ""} ${p.completed
+          ? "border-success/30 bg-success/10 shadow-[0_0_20px_rgba(16,185,129,0.1)]"
+          : "border-white/5 bg-white/5 hover:border-primary/40 hover:bg-white/10"
+        } hover-lift shadow-sm`}
     >
       {/* Drag handle */}
       <div className="cursor-grab opacity-0 group-hover:opacity-50 transition-opacity">
@@ -136,12 +147,11 @@ function PriorityItem({
       </div>
 
       {/* Checkbox */}
-      <button onClick={onToggle} className="shrink-0">
-        <div className={`flex h-5 w-5 items-center justify-center rounded-full border-2 font-mono text-[10px] font-bold transition-all ${
-          p.completed
-            ? "border-success bg-success text-success-foreground"
-            : "border-muted-foreground/30 text-muted-foreground hover:border-primary"
-        }`}>
+      <button onClick={handleToggle} className="shrink-0">
+        <div className={`flex h-6 w-6 items-center justify-center rounded-full border-2 font-mono-premium text-[10px] font-bold transition-all ${p.completed
+          ? "border-success bg-success text-success-foreground"
+          : "border-muted-foreground/30 text-muted-foreground hover:border-primary"
+          }`}>
           {p.completed ? <Check className="h-3 w-3" /> : i + 1}
         </div>
       </button>
@@ -155,14 +165,13 @@ function PriorityItem({
             onChange={e => setDraft(e.target.value)}
             onBlur={save}
             onKeyDown={e => { if (e.key === "Enter") save(); if (e.key === "Escape") { setDraft(p.text); onEndEdit(); } }}
-            className="w-full bg-transparent font-mono text-sm text-foreground outline-none border-b border-primary/40 py-0.5"
+            className="w-full bg-transparent font-mono-premium text-sm text-foreground outline-none border-b border-primary/40 py-0.5"
             placeholder="Enter priority..."
           />
         ) : (
           <button onClick={onStartEdit} className="w-full text-left">
-            <span className={`font-mono text-sm transition-all ${
-              p.completed ? "text-muted-foreground line-through" : p.text ? "text-foreground" : "text-muted-foreground/50 italic"
-            }`}>
+            <span className={`font-mono-premium text-sm transition-all ${p.completed ? "text-muted-foreground line-through" : p.text ? "text-foreground" : "text-muted-foreground/50 italic"
+              }`}>
               {p.text || "Click to edit..."}
             </span>
           </button>
