@@ -1,25 +1,30 @@
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Calendar as CalendarIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format, isToday } from "date-fns";
 import type { BlockType, TimeBlock } from "@/stores/plannerStore";
 
 interface AddBlockDialogProps {
-  onAdd: (block: Omit<TimeBlock, "id">) => void;
+  onAdd: (block: Omit<TimeBlock, "id"> & { date?: Date }) => void;
+  defaultDate?: Date;
 }
 
-export function AddBlockDialog({ onAdd }: AddBlockDialogProps) {
+export function AddBlockDialog({ onAdd, defaultDate }: AddBlockDialogProps) {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [startHour, setStartHour] = useState("9");
   const [duration, setDuration] = useState("1");
   const [type, setType] = useState<BlockType>("deep-work");
+  const [date, setDate] = useState<Date>(defaultDate || new Date());
 
   const handleSubmit = () => {
     if (!title.trim()) return;
-    onAdd({ title: title.trim(), startHour: Number(startHour), duration: Number(duration), type, completed: false });
+    onAdd({ title: title.trim(), startHour: Number(startHour), duration: Number(duration), type, completed: false, date });
     setTitle("");
     setOpen(false);
   };
@@ -79,6 +84,20 @@ export function AddBlockDialog({ onAdd }: AddBlockDialogProps) {
                 </SelectContent>
               </Select>
             </div>
+          </div>
+          <div>
+            <label className="font-mono text-[10px] uppercase text-muted-foreground">Date</label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="w-full flex justify-start items-center gap-2 font-mono text-xs">
+                  <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+                  {isToday(date) ? `Today · ${format(date, "PPP")}` : format(date, "PPP")}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0 bg-card border-border" align="start">
+                <Calendar mode="single" selected={date} onSelect={d => d && setDate(d)} className="p-3 pointer-events-auto" />
+              </PopoverContent>
+            </Popover>
           </div>
           <Button onClick={handleSubmit} className="w-full font-mono text-sm">Create Block</Button>
         </div>

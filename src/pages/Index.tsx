@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+// Removed duplicate import of addDays
+import { getDailyMotivationalQuote } from "@/lib/motivationalQuotes";
 import { motion, AnimatePresence } from "framer-motion";
 import { Crosshair, CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { format, addDays, subDays, isToday } from "date-fns";
@@ -25,9 +27,16 @@ const Index = () => {
   const displayDate = format(store.selectedDate, "EEEE, MMMM d");
   const { activeRitual, dismissRitual, forceRitual } = useRitualTimer(store.settings);
   const { permission, requestPermission, pendingAction, dismissAction } = useNotifications(store.blocks);
+  const [showAddBlockForTomorrow, setShowAddBlockForTomorrow] = useState(false);
+
+  const dailyQuote = getDailyMotivationalQuote();
 
   return (
     <div className="min-h-screen bg-transparent perspective-container flex flex-col">
+      {/* Motivational Quote Banner */}
+      <div className="w-full bg-gradient-to-r from-primary/80 to-accent/80 text-white text-center py-2 px-4 font-mono text-sm shadow-md mb-2 animate-fade-in">
+        <span role="img" aria-label="motivation">💡</span> {dailyQuote}
+      </div>
       {/* Sticky Current Task Header */}
       <StickyTaskHeader
         blocks={store.blocks}
@@ -76,7 +85,16 @@ const Index = () => {
           </div>
           <div className="flex items-center gap-2">
             <div className="hover-lift">
-              <AddBlockDialog onAdd={store.addBlock} />
+              <AddBlockDialog
+                onAdd={block => {
+                  // If block.date is set, update the store's selectedDate before adding
+                  if (block.date) {
+                    store.setSelectedDate(block.date);
+                  }
+                  store.addBlock(block);
+                }}
+                defaultDate={store.selectedDate}
+              />
             </div>
             <div className="hover-lift">
               <SettingsPanel
@@ -157,11 +175,37 @@ const Index = () => {
       <NotificationToast
         notification={pendingAction}
         onStart={(id) => {
-          store.setFocusBlockId(id);
+          if (pendingAction?.type === "plan-tomorrow") {
+            setShowAddBlockForTomorrow(true);
+          } else if (id) {
+            store.setFocusBlockId(id);
+          }
           dismissAction();
         }}
         onSnooze={dismissAction}
       />
+
+      {/* Add Block Dialog for Tomorrow */}
+      {showAddBlockForTomorrow && (
+        <AddBlockDialog
+          onAdd={block => {
+            const tomorrow = addDays(new Date(), 1);
+            store.setSelectedDate(tomorrow);
+            // Remove date property before passing to addBlock
+            const { date, ...rest } = block;
+            store.addBlock(rest);
+            setShowAddBlockForTomorrow(false);
+          }}
+          defaultDate={addDays(new Date(), 1)}
+        />
+      )}
+
+      {/* Footer */}
+      <div className="fixed bottom-2 left-1/2 -translate-x-1/2 z-40 flex justify-center w-full pointer-events-none">
+        <div className="bg-card/80 rounded-lg px-4 py-1 shadow font-mono text-xs text-muted-foreground pointer-events-auto">
+          Made by <a href="https://www.sohamchavan.site" target="_blank" rel="noopener noreferrer" className="text-primary underline ml-1">SOHAM</a>
+        </div>
+      </div>
     </div>
   );
 };
