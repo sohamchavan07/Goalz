@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import React, { useState } from "react";
 // Removed duplicate import of addDays
 import { getDailyMotivationalQuote } from "@/lib/motivationalQuotes";
