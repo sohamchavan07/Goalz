@@ -203,7 +203,15 @@ const Index = () => {
       {/* Footer */}
       <div className="fixed bottom-2 left-1/2 -translate-x-1/2 z-40 flex justify-center w-full pointer-events-none">
         <div className="bg-card/80 rounded-lg px-4 py-1 shadow font-mono text-xs text-muted-foreground pointer-events-auto">
-          Made by <a href="https://www.sohamchavan.site" target="_blank" rel="noopener noreferrer" className="text-primary underline ml-1">SOHAM</a>
+          Made by{' '}
+          <a
+            href="https://www.sohamchavan.site"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline ml-1"
+          >
+            SOHAM
+          </a>
         </div>
       </div>
     </div>
