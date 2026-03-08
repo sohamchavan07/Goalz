@@ -1,4 +1,3 @@
-import { Analytics } from "@vercel/analytics/next";
 import React, { useState } from "react";
 // Removed duplicate import of addDays
 import { getDailyMotivationalQuote } from "@/lib/motivationalQuotes";
@@ -148,6 +147,7 @@ const Index = () => {
             focusBlockId={store.focusBlockId}
             onSetFocus={store.setFocusBlockId}
             onAddBlock={store.addBlock}
+            onDeleteBlock={store.removeBlock}
             meetingBuffer={store.settings.meetingBuffer}
             bufferMinutes={store.settings.bufferMinutes}
           />

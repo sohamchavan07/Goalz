@@ -26,11 +26,12 @@ interface TimeBlockerProps {
   focusBlockId: string | null;
   onSetFocus: (id: string) => void;
   onAddBlock: (block: Omit<TimeBlock, "id">) => void;
+  onDeleteBlock: (id: string) => void;
   meetingBuffer: boolean;
   bufferMinutes: number;
 }
 
-export function TimeBlocker({ blocks, onToggleComplete, focusBlockId, onSetFocus, onAddBlock, meetingBuffer, bufferMinutes }: TimeBlockerProps) {
+export function TimeBlocker({ blocks, onToggleComplete, focusBlockId, onSetFocus, onAddBlock, onDeleteBlock, meetingBuffer, bufferMinutes }: TimeBlockerProps) {
   const deepWorkHours = blocks.filter(b => b.type === "deep-work").reduce((s, b) => s + b.duration, 0);
   const meetingHours = blocks.filter(b => b.type === "meeting").reduce((s, b) => s + b.duration, 0);
 
@@ -92,6 +93,7 @@ export function TimeBlocker({ blocks, onToggleComplete, focusBlockId, onSetFocus
                       isFocused={block.id === focusBlockId}
                       onToggle={() => onToggleComplete(block.id)}
                       onFocus={() => onSetFocus(block.id)}
+                      onDelete={() => onDeleteBlock(block.id)}
                     />
                     {meetingBuffer && hasFollowingBlock(block) && (
                       <div className="mb-2 flex items-center gap-1.5 rounded-lg border border-dashed border-white/10 px-3 py-2 bg-white/5">
@@ -156,11 +158,13 @@ function TimeBlockItem({
   isFocused,
   onToggle,
   onFocus,
+  onDelete,
 }: {
   block: TimeBlock;
   isFocused: boolean;
   onToggle: () => void;
   onFocus: () => void;
+  onDelete: () => void;
 }) {
   const [isLaunching, setIsLaunching] = useState(false);
   const style = BLOCK_STYLES[block.type];
@@ -211,15 +215,24 @@ function TimeBlockItem({
           {formatHour(block.startHour)} – {formatHour(block.startHour + block.duration)} · {block.duration}h
         </span>
       </div>
-      {!isFocused && !block.completed && (
+      <div className="flex flex-col gap-1 ml-2">
+        {!isFocused && !block.completed && (
+          <button
+            onClick={onFocus}
+            className="mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity bg-primary/10 p-1.5 rounded-lg border border-primary/20 hover:bg-primary/20"
+            title="Set as current focus"
+          >
+            <Play className="h-3.5 w-3.5 text-primary" />
+          </button>
+        )}
         <button
-          onClick={onFocus}
-          className="mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity bg-primary/10 p-1.5 rounded-lg border border-primary/20 hover:bg-primary/20"
-          title="Set as current focus"
+          onClick={onDelete}
+          className="opacity-0 group-hover:opacity-100 transition-opacity bg-destructive/10 p-1.5 rounded-lg border border-destructive/20 hover:bg-destructive/20 mt-1"
+          title="Delete block"
         >
-          <Play className="h-3.5 w-3.5 text-primary" />
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 text-destructive" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
-      )}
+      </div>
     </motion.div>
   );
 }

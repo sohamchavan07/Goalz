@@ -1,7 +1,9 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { format } from "date-fns";
 
 export type BlockType = "deep-work" | "meeting" | "break" | "admin";
+
+
 
 export interface TimeBlock {
   id: string;
@@ -25,26 +27,55 @@ export interface PlannerSettings {
   bufferMinutes: number;  // 5 or 10
 }
 
-const DEFAULT_BLOCKS: TimeBlock[] = [
- 
-];
 
-const DEFAULT_PRIORITIES: Priority[] = [
-  
-];
+const DEFAULT_BLOCKS: TimeBlock[] = [];
+const DEFAULT_PRIORITIES: Priority[] = [];
 
 function dateKey(date: Date) {
   return format(date, "yyyy-MM-dd");
 }
 
+
 const todayKey = dateKey(new Date());
 
 export function usePlannerStore() {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [blocksByDate, setBlocksByDate] = useState<Record<string, TimeBlock[]>>({ [todayKey]: DEFAULT_BLOCKS });
-  const [prioritiesByDate, setPrioritiesByDate] = useState<Record<string, Priority[]>>({ [todayKey]: DEFAULT_PRIORITIES });
-  const [settings, setSettings] = useState<PlannerSettings>({ planningHour: 23, reviewHour: 4, meetingBuffer: false, bufferMinutes: 5 });
-  const [focusBlockId, setFocusBlockId] = useState<string | null>("1");
+  // --- Persistence helpers ---
+  function loadFromStorage<T>(key: string, fallback: T): T {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return fallback;
+      return JSON.parse(raw);
+    } catch {
+      return fallback;
+    }
+  }
+  function saveToStorage<T>(key: string, value: T) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch {}
+  }
+
+  // --- State with persistence ---
+  const [selectedDate, setSelectedDate] = useState<Date>(() => {
+    const raw = localStorage.getItem("planner.selectedDate");
+    if (raw) {
+      const d = new Date(raw);
+      if (!isNaN(d.getTime())) return d;
+    }
+    return new Date();
+  });
+  const [blocksByDate, setBlocksByDate] = useState<Record<string, TimeBlock[]>>(() =>
+    loadFromStorage("planner.blocksByDate", { [todayKey]: DEFAULT_BLOCKS })
+  );
+  const [prioritiesByDate, setPrioritiesByDate] = useState<Record<string, Priority[]>>(() =>
+    loadFromStorage("planner.prioritiesByDate", { [todayKey]: DEFAULT_PRIORITIES })
+  );
+  const [settings, setSettings] = useState<PlannerSettings>(() =>
+    loadFromStorage("planner.settings", { planningHour: 23, reviewHour: 4, meetingBuffer: false, bufferMinutes: 5 })
+  );
+  const [focusBlockId, setFocusBlockId] = useState<string | null>(() =>
+    loadFromStorage("planner.focusBlockId", "1")
+  );
 
   const key = dateKey(selectedDate);
   const blocks = blocksByDate[key] || [];
@@ -53,6 +84,23 @@ export function usePlannerStore() {
     { id: crypto.randomUUID(), text: "", completed: false },
     { id: crypto.randomUUID(), text: "", completed: false },
   ];
+
+  // --- Persist state on change ---
+  useEffect(() => {
+    saveToStorage("planner.selectedDate", selectedDate.toISOString());
+  }, [selectedDate]);
+  useEffect(() => {
+    saveToStorage("planner.blocksByDate", blocksByDate);
+  }, [blocksByDate]);
+  useEffect(() => {
+    saveToStorage("planner.prioritiesByDate", prioritiesByDate);
+  }, [prioritiesByDate]);
+  useEffect(() => {
+    saveToStorage("planner.settings", settings);
+  }, [settings]);
+  useEffect(() => {
+    saveToStorage("planner.focusBlockId", focusBlockId);
+  }, [focusBlockId]);
 
   const toggleBlockComplete = useCallback((id: string) => {
     setBlocksByDate(prev => ({ ...prev, [key]: (prev[key] || []).map(b => b.id === id ? { ...b, completed: !b.completed } : b) }));
