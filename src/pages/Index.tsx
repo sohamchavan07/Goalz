@@ -27,7 +27,7 @@ const Index = () => {
   const { permission, requestPermission, pendingAction, dismissAction } = useNotifications(store.blocks);
 
   return (
-    <div className="min-h-screen bg-transparent perspective-container">
+    <div className="min-h-screen bg-transparent perspective-container flex flex-col">
       {/* Sticky Current Task Header */}
       <StickyTaskHeader
         blocks={store.blocks}
@@ -35,48 +35,43 @@ const Index = () => {
         onRequestNotifications={requestPermission}
       />
 
-      <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl px-2 py-4 sm:px-6 lg:px-8 w-full">
         {/* Header */}
         <motion.header
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-6 flex items-center justify-between"
+          className="mb-6 flex flex-col sm:flex-row items-center justify-between gap-4"
         >
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 glow-primary border border-primary/20">
               <Crosshair className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h1 className="text-gradient text-2xl font-display font-bold tracking-tight">GOALZ</h1>
-              <div className="flex items-center gap-1">
-                <button onClick={() => store.setSelectedDate(subDays(store.selectedDate, 1))} className="rounded p-0.5 hover:bg-secondary">
-                  <ChevronLeft className="h-3 w-3 text-muted-foreground" />
-                </button>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <button className="flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors">
-                      <CalendarIcon className="h-3 w-3" />
-                      {isToday(store.selectedDate) ? `Today · ${displayDate}` : displayDate}
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 bg-card border-border" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={store.selectedDate}
-                      onSelect={(d) => d && store.setSelectedDate(d)}
-                      className={cn("p-3 pointer-events-auto")}
-                    />
-                  </PopoverContent>
-                </Popover>
-                <button onClick={() => store.setSelectedDate(addDays(store.selectedDate, 1))} className="rounded p-0.5 hover:bg-secondary">
-                  <ChevronRight className="h-3 w-3 text-muted-foreground" />
-                </button>
-                {!isToday(store.selectedDate) && (
-                  <button onClick={() => store.setSelectedDate(new Date())} className="ml-1 rounded px-1.5 py-0.5 font-mono text-[9px] text-primary hover:bg-primary/10">
-                    Today
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button className="flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors">
+                    <CalendarIcon className="h-3 w-3" />
+                    {isToday(store.selectedDate) ? `Today · ${displayDate}` : displayDate}
                   </button>
-                )}
-              </div>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 bg-card border-border" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={store.selectedDate}
+                    onSelect={(d) => d && store.setSelectedDate(d)}
+                    className={cn("p-3 pointer-events-auto")}
+                  />
+                </PopoverContent>
+              </Popover>
+              <button onClick={() => store.setSelectedDate(addDays(store.selectedDate, 1))} className="rounded p-0.5 hover:bg-secondary">
+                <ChevronRight className="h-3 w-3 text-muted-foreground" />
+              </button>
+              {!isToday(store.selectedDate) && (
+                <button onClick={() => store.setSelectedDate(new Date())} className="ml-1 rounded px-1.5 py-0.5 font-mono text-[9px] text-primary hover:bg-primary/10">
+                  Today
+                </button>
+              )}
+              <h1 className="text-gradient text-xl sm:text-2xl font-display font-bold tracking-tight mt-2 sm:mt-0">GOALZ</h1>
             </div>
           </div>
           <div className="flex items-center gap-2">

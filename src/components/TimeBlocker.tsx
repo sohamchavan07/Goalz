@@ -162,18 +162,38 @@ function TimeBlockItem({
   onToggle: () => void;
   onFocus: () => void;
 }) {
+  const [isLaunching, setIsLaunching] = useState(false);
   const style = BLOCK_STYLES[block.type];
   const Icon = style.icon;
   const height = Math.max(36, block.duration * 56);
 
+  const handleToggle = () => {
+    if (!block.completed) {
+      setIsLaunching(true);
+      setTimeout(() => {
+        onToggle();
+        setIsLaunching(false);
+      }, 700);
+    } else {
+      setIsLaunching(true);
+      setTimeout(() => {
+        onToggle();
+        // Remove block after completion
+        if (typeof onFocus === 'function') {
+          onFocus(); // Use onFocus as a remove handler if available
+        }
+        setIsLaunching(false);
+      }, 700);
+    }
+  };
   return (
     <motion.div
       whileHover={{ scale: 1.01, x: 4 }}
       className={`group mb-2 flex items-start gap-3 rounded-xl border px-4 py-3 transition-all ${style.bg} ${style.border} ${isFocused ? "glow-primary ring-1 ring-primary/30" : ""
-        } ${block.completed ? "opacity-40 grayscale-[0.5]" : "hover:border-primary/40"} hover-lift shadow-lg`}
+        } ${block.completed ? "opacity-40 grayscale-[0.5]" : "hover:border-primary/40"} hover-lift shadow-lg ${isLaunching ? "animate-launch" : ""}`}
       style={{ minHeight: height }}
     >
-      <button onClick={onToggle} className="mt-1 shrink-0">
+      <button onClick={handleToggle} className="mt-1 shrink-0">
         <div className={`flex h-5 w-5 items-center justify-center rounded-lg border-2 transition-all ${block.completed ? "border-success bg-success" : "border-muted-foreground/30 hover:border-primary"
           }`}>
           {block.completed && <Check className="h-3 w-3 text-success-foreground" />}

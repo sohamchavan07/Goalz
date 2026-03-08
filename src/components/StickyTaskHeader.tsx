@@ -40,19 +40,19 @@ export function StickyTaskHeader({ blocks, notificationPermission, onRequestNoti
         className="fixed top-0 left-0 right-0 z-40 border-b border-white/5 bg-[#0a0a0f]/80 backdrop-blur-xl shadow-2xl"
       >
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
-          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 border border-primary/20 shadow-[0_0_15px_rgba(79,70,229,0.2)]">
               <Zap className="h-4 w-4 text-primary animate-pulse-glow glow-text-primary" />
             </div>
             <div>
-              <p className="font-display text-[9px] uppercase font-bold tracking-[0.2em] text-muted-foreground/60">Orbital Sector</p>
-              <p className="font-display text-sm font-bold text-foreground tracking-tight">{currentBlock.title}</p>
+                <p className="font-display text-[8px] sm:text-[9px] uppercase font-bold tracking-[0.2em] text-muted-foreground/60">Orbital Sector</p>
+                <p className="font-display text-xs sm:text-sm font-bold text-foreground tracking-tight truncate max-w-[120px] sm:max-w-none">{currentBlock.title}</p>
             </div>
           </div>
-          <div className="flex items-center gap-5">
+            <div className="flex items-center gap-3 sm:gap-5">
             <div className="flex items-center gap-2.5 font-mono-premium tabular-nums text-primary glow-text-primary">
-              <Timer className="h-4 w-4" />
-              <span className="text-base font-bold tracking-tight">{String(mins).padStart(2, "0")}:{String(secs).padStart(2, "0")}</span>
+                <Timer className="h-4 w-4" />
+                <span className="text-sm sm:text-base font-bold tracking-tight">{String(mins).padStart(2, "0")}:{String(secs).padStart(2, "0")}</span>
             </div>
             <div className="h-4 w-[1px] bg-white/10" />
             {notificationPermission !== "granted" && (

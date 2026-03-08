@@ -26,18 +26,11 @@ export interface PlannerSettings {
 }
 
 const DEFAULT_BLOCKS: TimeBlock[] = [
-  { id: "1", title: "Morning Deep Work", startHour: 6, duration: 2, type: "deep-work", completed: false },
-  { id: "2", title: "Standup", startHour: 9, duration: 0.5, type: "meeting", completed: false },
-  { id: "3", title: "Feature Development", startHour: 10, duration: 3, type: "deep-work", completed: false },
-  { id: "4", title: "Lunch Break", startHour: 13, duration: 1, type: "break", completed: false },
-  { id: "5", title: "Code Review", startHour: 14, duration: 1.5, type: "admin", completed: false },
-  { id: "6", title: "Evening Deep Work", startHour: 16, duration: 2, type: "deep-work", completed: false },
+ 
 ];
 
 const DEFAULT_PRIORITIES: Priority[] = [
-  { id: "p1", text: "Ship authentication module", completed: false },
-  { id: "p2", text: "Review PR #247", completed: false },
-  { id: "p3", text: "Write API documentation", completed: false },
+  
 ];
 
 function dateKey(date: Date) {

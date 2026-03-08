@@ -129,7 +129,12 @@ function PriorityItem({
         setIsLaunching(false);
       }, 700);
     } else {
-      onToggle();
+      setIsLaunching(true);
+      setTimeout(() => {
+        onToggle();
+        onRemove(); // Remove after completion
+        setIsLaunching(false);
+      }, 700);
     }
   };
 
@@ -147,14 +152,24 @@ function PriorityItem({
       </div>
 
       {/* Checkbox */}
-      <button onClick={handleToggle} className="shrink-0">
-        <div className={`flex h-6 w-6 items-center justify-center rounded-full border-2 font-mono-premium text-[10px] font-bold transition-all ${p.completed
-          ? "border-success bg-success text-success-foreground"
-          : "border-muted-foreground/30 text-muted-foreground hover:border-primary"
-          }`}>
-          {p.completed ? <Check className="h-3 w-3" /> : i + 1}
-        </div>
-      </button>
+        <button onClick={handleToggle} className="shrink-0 focus:outline-none">
+          <div
+            className={`flex h-8 w-8 items-center justify-center rounded-full border-2 font-mono-premium text-[12px] font-bold transition-all duration-300 shadow-md relative ${p.completed
+              ? "border-success bg-success text-success-foreground animate-pulse"
+              : "border-muted-foreground/30 text-muted-foreground hover:border-primary bg-white/10"
+            }`}
+            style={p.completed ? { boxShadow: '0 0 0 4px rgba(16,185,129,0.15), 0 0 12px 2px rgba(16,185,129,0.25)' } : {}}
+          >
+            {p.completed ? (
+              <Check className="h-5 w-5 text-success-foreground drop-shadow-lg" />
+            ) : (
+              <span className="text-muted-foreground">{i + 1}</span>
+            )}
+            {p.completed && (
+              <span className="absolute top-0 right-0 h-3 w-3 bg-success rounded-full border-2 border-white animate-bounce" />
+            )}
+          </div>
+        </button>
 
       {/* Text / Edit */}
       <div className="flex-1 min-w-0">
