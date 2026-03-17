@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { getDailyMotivationalQuote } from "@/lib/motivationalQuotes";
 import { motion, AnimatePresence } from "framer-motion";
 import { Crosshair, CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
-import { format, addDays, subDays, isToday } from "date-fns";
+import { format, addDays, subDays, isToday, startOfToday } from "date-fns";
 import { FocusBanner } from "@/components/FocusBanner";
 import { TopPriorities } from "@/components/TopPriorities";
 import { TimeBlocker } from "@/components/TimeBlocker";
@@ -69,6 +69,7 @@ const Index = () => {
                     selected={store.selectedDate}
                     onSelect={(d) => d && store.setSelectedDate(d)}
                     className={cn("p-3 pointer-events-auto")}
+                    disabled={(date) => date < startOfToday()}
                   />
                 </PopoverContent>
               </Popover>

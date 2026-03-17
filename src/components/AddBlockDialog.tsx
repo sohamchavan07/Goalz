@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { format, isToday } from "date-fns";
+import { format, isToday, subDays, startOfToday } from "date-fns";
 import type { BlockType, TimeBlock } from "@/stores/plannerStore";
 
 interface AddBlockDialogProps {
@@ -55,7 +55,7 @@ export function AddBlockDialog({ onAdd, defaultDate }: AddBlockDialogProps) {
                 <SelectContent className="bg-card border-border">
                   {Array.from({ length: 24 }, (_, i) => (
                     <SelectItem key={i} value={String(i)} className="font-mono text-sm">
-                      {i === 0 ? "12 AM" : i === 12 ? "12 PM" : i < 12 ? `${i} AM` : `${i-12} PM`}
+                      {i === 0 ? "12 AM" : i === 12 ? "12 PM" : i < 12 ? `${i} AM` : `${i - 12} PM`}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -66,7 +66,7 @@ export function AddBlockDialog({ onAdd, defaultDate }: AddBlockDialogProps) {
               <Select value={duration} onValueChange={setDuration}>
                 <SelectTrigger className="bg-secondary border-border font-mono text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent className="bg-card border-border">
-                  {["0.5","1","1.5","2","2.5","3","4"].map(d => (
+                  {["0.5", "1", "1.5", "2", "2.5", "3", "4"].map(d => (
                     <SelectItem key={d} value={d} className="font-mono text-sm">{d}h</SelectItem>
                   ))}
                 </SelectContent>
@@ -95,7 +95,13 @@ export function AddBlockDialog({ onAdd, defaultDate }: AddBlockDialogProps) {
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0 bg-card border-border" align="start">
-                <Calendar mode="single" selected={date} onSelect={d => d && setDate(d)} className="p-3 pointer-events-auto" />
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={d => d && setDate(d)}
+                  className="p-3 pointer-events-auto"
+                  disabled={(date) => date < startOfToday()}
+                />
               </PopoverContent>
             </Popover>
           </div>
